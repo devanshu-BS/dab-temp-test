@@ -8,16 +8,6 @@ resources:
         timezone_id: Asia/Kolkata
         pause_status: PAUSED
 
-      email_notifications:
-        on_failure:
-          - ${var.email}
-          - saksham.singh@batterysmart.in
-          - devanshu.jain@batterysmart.in
-
-      notification_settings:
-        no_alert_for_skipped_runs: true
-        no_alert_for_canceled_runs: true
-
       job_clusters:
         - job_cluster_key: location-integrity-cluster
           new_cluster:
