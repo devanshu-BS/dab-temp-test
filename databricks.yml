@@ -70,7 +70,7 @@ targets:
     default: true
     mode: development
     workspace:
-      host: https://dbc-0d0799bd-c46e.cloud.databricks.com
+      host: https://dbc-460963b0-c9e0.cloud.databricks.com
       root_path: ~/Shared/.bundle/${bundle.target}/${bundle.name}
     run_as:
       service_principal_name: 2571cf4b-e5f7-43d5-8747-465f632d9271  # svc_databricks-dev
