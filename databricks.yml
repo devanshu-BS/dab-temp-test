@@ -109,7 +109,7 @@ targets:
       schema_silver: silver
       schema_bronze: bronze
       environment: prod
-      email: ritik.verma@batterysmart.in
+      email: devanshu.jain@batterysmart.in
       ds_analytics_email: analytics-ds@batterysmart.in
       pause_status: PAUSED
       instance_profile_arn: 'arn:aws:iam::910556394401:instance-profile/databricks-instance-profile'
