@@ -1,0 +1,11 @@
+notebook_path: notebooks/analytics/pdd_code
+quartz_cron_expression: "0 0/15 6-23 ? * *"
+owner_email: divyansh.garg@batterysmart.in
+tags: 
+  owner: Divyansh
+  team: "Data Science"
+additional_libraries:
+  - rapidfuzz
+  - fuzzywuzzy
+run: False
+language: python #python or pyspark
