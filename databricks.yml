@@ -1,0 +1,132 @@
+# This is a Databricks asset bundle definition for prod_replica_ingestion.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: db_data_pipelines
+  # uuid: e7c5eeb6-b427-46a9-bf20-9a7efeabe4b4
+
+include:
+  - resources/*.yml
+  # - resources/prod_histories_job.yml
+  # - resources/daily_ingestion_job.yml
+
+variables:
+  git_branch:
+    description: The git branch being used for deployment
+    default: ${bundle.git.branch} # Must set this separately as this info is unavailable during CI/CD deployment.
+  catalog:
+    description: The Catalog of the SQL Warehouse that databricks_job is writing to
+    default: deltalake
+  schema_gold:
+    description: The Schema for gold layer
+    default: gold
+  schema_silver:
+    description: The Schema for silver layer
+    default: silver
+  schema_bronze:
+    description: The Schema for bronze layer
+    default: bronze
+  cluster_policy_id_job_compute:
+    description: The cluster policy id for using job computer cluster
+    lookup:
+      cluster_policy: "Job Compute"
+  environment:
+    description: environment
+  process_date:
+    description: process_date
+    default: "{{job.trigger.time.iso_date}}"
+  email:
+    description: Email for getting notification on_failure
+  ds_analytics_email:
+    description: Analytics Email for getting notification on_failure
+  pause_status:
+    description: Workflow schedule status (PAUSED or UNPAUSED)
+  cluster_spark_version:
+    description: Spark version used for compute cluster
+    default: 14.3.x-scala2.12
+  datalake_readonly_arn:
+    description: arn that read datalake data
+  instance_profile_arn:
+    description: instance profile arn for the env
+  zone_id:
+    description: Availability zone for EC2 cluster
+    default: ap-south-1a
+  node_type_id:
+    description: Cluster worker node type for job compute cluster
+  driver_node_type_id:
+    description: Cluster driver node type for job compute cluster
+  function_notebook_path:
+    description: Path to function notebook
+    default: ${workspace.file_path}/notebooks
+  tag_value:
+    description: Tag Value for databricks jobs
+    default: dev
+
+# The targets section defines the different deployment environments for this bundle.
+targets:
+  dev:
+    # We use 'mode: development' to indicate this is a personal development copy:
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default
+    default: true
+    mode: development
+    workspace:
+      host: https://dbc-0d0799bd-c46e.cloud.databricks.com
+      root_path: ~/Shared/.bundle/${bundle.target}/${bundle.name}
+    run_as:
+      service_principal_name: 2571cf4b-e5f7-43d5-8747-465f632d9271  # svc_databricks-dev
+    variables:
+      catalog: deltalake
+      schema_gold: gold
+      schema_silver: silver
+      schema_bronze: bronze
+      environment: nonprod
+      email: ritik.verma@batterysmart.in
+      ds_analytics_email: analytics-ds@batterysmart.in
+      pause_status: PAUSED
+      instance_profile_arn: 'arn:aws:iam::910556394401:instance-profile/databricks-instance-profile'
+      zone_id: ap-south-1a
+      node_type_id: m5d.xlarge
+      driver_node_type_id: m5d.xlarge
+      datalake_readonly_arn: 'arn:aws:iam::910556394401:role/databricks-instance-profile'
+      function_notebook_path: ${workspace.file_path}/notebooks
+      tag_value: dev
+    permissions:
+      - user_name: ritik.verma@batterysmart.in
+        level: CAN_MANAGE
+      - group_name: developers
+        level: CAN_MANAGE
+
+
+
+  prod:
+  # We use 'mode: production' to indicate this is a production deployment.
+    mode: production
+    workspace:
+      host: https://dbc-460963b0-c9e0.cloud.databricks.com
+    run_as:
+      service_principal_name: 2571cf4b-e5f7-43d5-8747-465f632d9271  # svc_databricks-dev
+    variables:
+      catalog: deltalake
+      schema_gold: gold
+      schema_silver: silver
+      schema_bronze: bronze
+      environment: prod
+      email: ritik.verma@batterysmart.in
+      ds_analytics_email: analytics-ds@batterysmart.in
+      pause_status: PAUSED
+      instance_profile_arn: 'arn:aws:iam::910556394401:instance-profile/databricks-instance-profile'
+      zone_id: ap-south-1a
+      node_type_id: m5d.xlarge
+      driver_node_type_id: m5d.xlarge
+      datalake_readonly_arn: 'arn:aws:iam::910556394401:role/databricks-instance-profile'
+      cluster_spark_version: 14.3.x-scala2.12
+      tag_value: DEng
+permissions:
+      - group_name: DEng
+        level: CAN_MANAGE
+      - group_name: developers
+        level: CAN_VIEW
+      - group_name: analytics
+        level: CAN_VIEW
+
+
