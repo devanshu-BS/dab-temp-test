@@ -26,24 +26,6 @@ import json
 
 
 
-import os, sys
-import pandas as pd
-# sys.path.append('../utils')
-from datetime import datetime, timedelta
-from queryHelper import *
-import numpy as np
-from sheetHelper import *
-from databaseHelper import *
-from geospatialHelper import *
-from dotenv import load_dotenv
-import json
-import h3
-from shapely import wkb
-from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor
-
-load_dotenv()
-
 def wkb_to_latlon(wkb_hex):
     point = wkb.loads(bytes.fromhex(wkb_hex))
     return point.y, point.x
