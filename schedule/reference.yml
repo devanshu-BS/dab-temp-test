@@ -42,7 +42,8 @@ resources:
             source: GIT
           job_cluster_key: job-cluster-name
 
-
+      tags:
+        service: Analytics
 
       git_source:
         git_url: https://github.com/devanshu-BS/dab-temp-test.git
