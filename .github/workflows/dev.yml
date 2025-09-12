@@ -71,7 +71,7 @@ jobs:
           mkdir -p files-to-deploy
 
           for file in resources/automated_*.yml; do
-            filename = $(basename "$file")
+            filename=$(basename "$file")
 
             if [ -f "previous-artifacts/$filename" ]; then
               cmp -s "$file" "previous-artifacts/$filename"
