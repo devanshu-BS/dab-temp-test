@@ -9,6 +9,11 @@ resources:
         timezone_id: Asia/Kolkata
         pause_status: PAUSED
 
+      email_notifications:
+        on_failure:
+          - ${var.ds_analytics_email}
+        no_alert_for_skipped_runs: true
+
       job_clusters:
         - job_cluster_key: job-cluster-name
           new_cluster:
