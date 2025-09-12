@@ -1,9 +1,9 @@
 notebook_path: notebooks/analytics/pdd_code
 quartz_cron_expression: "0 0/15 6-23 ? * *"
-owner_email: divyansh.garg@batterysmart.in
+owner_email: devanshu.jain@batterysmart.in
 tags: 
-  owner: Divyansh
-  team: "Data Science"
+  owner: Devanshu
+  team: "Data Engineering"
 additional_libraries:
   - rapidfuzz
   - fuzzywuzzy
