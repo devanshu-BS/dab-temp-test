@@ -17,10 +17,6 @@ resources:
       notification_settings:
         no_alert_for_skipped_runs: true
         no_alert_for_canceled_runs: true
-      
-      webhook_notifications:
-        on_failure:
-          - id: bb7409cf-8114-46dc-a73a-8c47dc4bcd9e
 
       job_clusters:
         - job_cluster_key: location-integrity-cluster
@@ -57,8 +53,6 @@ resources:
             - pypi:
                 package: geopy
 
-      tags:
-        service:  ${var.tag_value}
 
       git_source:
         git_url: https://github.com/Battery-Smart/dab-template.git
