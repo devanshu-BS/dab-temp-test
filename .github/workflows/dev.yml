@@ -1,0 +1,103 @@
+name: Deploy to Prod
+
+concurrency: "1"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.yml"
+      - "**/*.py"
+      - "**/*.ipynb"
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+    paths:
+      - "**/*.yml"
+      - "**/*.py"
+      - "**/*.ipynb"
+      - "**/*.txt"
+      - "**/*.json"
+      - "**/*.avsc"
+
+jobs:
+
+  build:
+    name: "Validate bundle"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: databricks/setup-cli@main
+
+      - run: databricks bundle validate
+        env:
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}          
+          DATABRICKS_BUNDLE_ENV: prod
+
+  deploy:
+    name: "Deploy Bundle"
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    needs:
+      - build
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - run: |
+          python3 -m pip install --upgrade pip
+          pip install pyyaml
+          python3 schedule/automate_yml_resources.py
+
+      - uses: databricks/setup-cli@main
+
+      - uses: actions/download-artifact@v3
+        with:
+          path: previous-artifacts
+
+      - run: |
+          mkdir -p files-to-deploy
+
+          for file in resources/automated_*.yml; do
+            filename = $(basename "$file")
+
+            if [ -f "previous-artifacts/$filename" ]; then
+              cmp -s "$file" "previous-artifacts/$filename"
+              if [ $? -ne 0 ]; then
+                echo "Changed: $filename"
+                cp "$file" files-to-deploy/
+              else
+                echo "Unchanged: $filename"
+              fi
+            else
+              echo "New file: $filename"
+              cp "$file" files-to-deploy/
+            fi
+          done 
+        
+      - run: |
+          for file in files-to-deploy/*.yml; do
+            echo "Deploying $file..."
+            databricks bundle deploy
+          done
+        env:
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}   
+          DATABRICKS_BUNDLE_ENV: prod
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: resources/automated_*.yml
