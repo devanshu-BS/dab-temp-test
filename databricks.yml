@@ -80,7 +80,7 @@ targets:
       schema_silver: silver
       schema_bronze: bronze
       environment: nonprod
-      email: ritik.verma@batterysmart.in
+      email: devanshu.jain@batterysmart.in
       ds_analytics_email: analytics-ds@batterysmart.in
       pause_status: PAUSED
       instance_profile_arn: 'arn:aws:iam::910556394401:instance-profile/databricks-instance-profile'
@@ -91,9 +91,7 @@ targets:
       function_notebook_path: ${workspace.file_path}/notebooks
       tag_value: dev
     permissions:
-      - user_name: ritik.verma@batterysmart.in
-        level: CAN_MANAGE
-      - group_name: developers
+      - user_name: devanshu.jain@batterysmart.in
         level: CAN_MANAGE
 
 
@@ -122,11 +120,8 @@ targets:
       cluster_spark_version: 14.3.x-scala2.12
       tag_value: DEng
 permissions:
-      - group_name: DEng
-        level: CAN_MANAGE
-      - group_name: developers
-        level: CAN_VIEW
-      - group_name: analytics
-        level: CAN_VIEW
+  - user_name: devanshu.jain@batterysmart.in
+    level: CAN_MANAGE
+
 
 
