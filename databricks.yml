@@ -73,7 +73,7 @@ targets:
       host: https://dbc-460963b0-c9e0.cloud.databricks.com
       root_path: ~/Shared/.bundle/${bundle.target}/${bundle.name}
     run_as:
-      service_principal_name: 2571cf4b-e5f7-43d5-8747-465f632d9271  # svc_databricks-dev
+      service_principal_name: 3a6f907a-936f-4630-b5a2-e771d1ba785e  # svc_databricks-dev
     variables:
       catalog: deltalake
       schema_gold: gold
@@ -104,7 +104,7 @@ targets:
     workspace:
       host: https://dbc-460963b0-c9e0.cloud.databricks.com
     run_as:
-      service_principal_name: 2571cf4b-e5f7-43d5-8747-465f632d9271  # svc_databricks-dev
+      service_principal_name: 3a6f907a-936f-4630-b5a2-e771d1ba785e  # svc_databricks-dev
     variables:
       catalog: deltalake
       schema_gold: gold
