@@ -7,18 +7,12 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 0 0 0 ?"
         timezone_id: Asia/Kolkata
-        pause_status: UNPAUSED
+        pause_status: PAUSED
 
       email_notifications:
         on_failure:
           - ${var.ds_analytics_email}
         no_alert_for_skipped_runs: true
-      webhook_notifications:
-        on_failure:
-          - id: bb7409cf-8114-46dc-a73a-8c47dc4bcd9e
-      notification_settings:
-        no_alert_for_skipped_runs: true
-        no_alert_for_canceled_runs: true
 
       job_clusters:
         - job_cluster_key: job-cluster-name
@@ -48,20 +42,10 @@ resources:
             source: GIT
           job_cluster_key: job-cluster-name
 
-
       tags:
         service: Analytics
 
-      permissions:
-        - group_name: DEng
-          level: CAN_MANAGE
-        - group_name: developers
-          level: CAN_VIEW
-        - group_name: analytics
-          level: CAN_MANAGE
-
-
       git_source:
-        git_url: https://github.com/Battery-Smart/dab-template.git
+        git_url: https://github.com/devanshu-BS/dab-temp-test.git
         git_provider: gitHub
         git_branch: ${var.git_branch} 
