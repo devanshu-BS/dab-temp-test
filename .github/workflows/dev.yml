@@ -64,15 +64,23 @@ jobs:
 
       - uses: databricks/setup-cli@main
 
-      - uses: actions/download-artifact@v3
+      # Restore previously deployed YMLs from cache
+      - name: Restore deployed files cache
+        id: cache-restore
+        uses: actions/cache@v3
         with:
           path: previous-artifacts
+          key: deployed-ymls-${{ github.ref }}
+          restore-keys: |
+            deployed-ymls-
 
-      - run: |
+      - name: Compare and collect files to deploy
+        run: |
           mkdir -p files-to-deploy
+          mkdir -p previous-artifacts
 
           for file in resources/automated_*.yml; do
-            filename = $(basename "$file")
+            filename=$(basename "$file")
 
             if [ -f "previous-artifacts/$filename" ]; then
               cmp -s "$file" "previous-artifacts/$filename"
@@ -86,9 +94,11 @@ jobs:
               echo "New file: $filename"
               cp "$file" files-to-deploy/
             fi
-          done 
-        
-      - run: |
+          done
+
+      - name: Deploy Changed Files
+        run: |
+          shopt -s nullglob
           for file in files-to-deploy/*.yml; do
             echo "Deploying $file..."
             databricks bundle deploy
@@ -98,6 +108,27 @@ jobs:
           DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}   
           DATABRICKS_BUNDLE_ENV: prod
 
-      - uses: actions/upload-artifact@v4
-        with:
-          path: resources/automated_*.yml
+      - name: Save deployed files for next run
+        run: |
+          mkdir -p previous-artifacts
+          cp resources/automated_*.yml previous-artifacts/
+
+  # deploy:
+  #   name: "Deploy bundle"
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+  #   needs:
+  #     - build
+  #     - automated_yml
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - uses: databricks/setup-cli@main
+
+  #     - run: databricks bundle deploy
+  #       env:
+  #         DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+  #         DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}   
+  #         DATABRICKS_BUNDLE_ENV: prod
