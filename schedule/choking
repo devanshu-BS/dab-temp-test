@@ -1,0 +1,13 @@
+notebook_path: notebooks/analytics/choking
+quartz_cron_expression: "0 30 3 * * ?"
+
+owner_email: rahul.bajaj@batterysmart.in
+
+tags:
+  owner: rahul
+
+additional_libraries:
+  - pytz==2025.1
+
+run: False
+language: python
