@@ -63,12 +63,19 @@ jobs:
 
       - uses: databricks/setup-cli@main
 
-      - uses: actions/download-artifact@v4
+      - name: Restore deployed files cache
+        id: cache-restore
+        uses: actions/cache@v3
         with:
           path: previous-artifacts
+          key: deployed-ymls-${{ github.ref }}
+          restore-keys: |
+            deployed-ymls-
 
-      - run: |
+      - name: Compare and collect files to deploy
+        run: |
           mkdir -p files-to-deploy
+          mkdir -p previous-artifacts
 
           for file in resources/automated_*.yml; do
             filename=$(basename "$file")
@@ -87,7 +94,9 @@ jobs:
             fi
           done 
         
-      - run: |
+      - name: Deploy Changed Files
+        run: |
+          shopt -s nullglob
           for file in files-to-deploy/*.yml; do
             echo "Deploying $file..."
             databricks bundle deploy
@@ -96,6 +105,7 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}   
           DATABRICKS_BUNDLE_ENV: prod
 
-      - uses: actions/upload-artifact@v4
-        with:
-          path: resources/automated_*.yml
+      - name: Save deployed files for next run
+        run: |
+          mkdir -p previous-artifacts
+          cp resources/automated_*.yml previous-artifacts/
